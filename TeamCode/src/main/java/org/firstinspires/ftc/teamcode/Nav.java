@@ -84,6 +84,21 @@ public class Nav extends OpMode
         double leftRearPower;
         double rightRearPower;
 
+
+        boolean rightBumperPressed = gamepad1.right_bumper;
+        boolean leftBumperPressed = gamepad1.left_bumper;
+
+        if (rightBumperPressed) {
+
+        }
+
+        else if (leftBumperPressed) {   }
+
+        else {  }
+
+
+
+
         // POV Mode uses left stick to go forward, and right stick to turn.
         // - This uses basic math to combine motions and is easier to drive straight.
         double drive = -gamepad1.left_stick_y;
@@ -94,6 +109,7 @@ public class Nav extends OpMode
         leftRearPower = Range.clip(drive + turn, -1.0, 1.0) ;
 
         // Send calculated power to wheels
+
         leftRearMotor.setPower(leftRearPower);
         rightFrontMotor.setPower(rightFrontPower);
         leftFrontMotor.setPower(leftFrontPower);
@@ -101,8 +117,8 @@ public class Nav extends OpMode
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Motors", "leftFront (%.2f), rightFront (%.2f), leftRear (%.2f), rightRear (%.2f)", leftFrontPower, rightFrontPower,leftRearPower,rightRearPower);
-    }
 
+    }
     /*
      * Code to run ONCE after the driver hits STOP
      */
