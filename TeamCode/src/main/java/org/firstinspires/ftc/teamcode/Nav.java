@@ -79,46 +79,56 @@ public class Nav extends OpMode
     @Override
     public void loop() {
         // Setup a variable for each drive wheel to save power level for telemetry
-        double leftFrontPower;
-        double rightFrontPower;
-        double leftRearPower;
-        double rightRearPower;
-
 
         boolean rightBumperPressed = gamepad1.right_bumper;
         boolean leftBumperPressed = gamepad1.left_bumper;
 
         if (rightBumperPressed) {
-
+            SetPower (-1,1,-1,1);
+        }
+        else if (leftBumperPressed) {
+            SetPower (1,-1,1,-1);
+        }
+        else {
+            PovDrive();
         }
 
-        else if (leftBumperPressed) {   }
-
-        else {  }
 
 
 
 
-        // POV Mode uses left stick to go forward, and right stick to turn.
-        // - This uses basic math to combine motions and is easier to drive straight.
-        double drive = -gamepad1.left_stick_y;
-        double turn  =  gamepad1.right_stick_x;
-        leftFrontPower = Range.clip(drive + turn, -1.0, 1.0) ;
-        rightFrontPower = Range.clip(drive - turn, -1.0, 1.0) ;
-        rightRearPower = Range.clip(drive - turn, -1.0, 1.0) ;
-        leftRearPower = Range.clip(drive + turn, -1.0, 1.0) ;
 
-        // Send calculated power to wheels
+    }
+private void PovDrive(){
 
+    double leftFrontPower;
+    double rightFrontPower;
+    double leftRearPower;
+    double rightRearPower;
+    // POV Mode uses left stick to go forward, and right stick to turn.
+    // - This uses basic math to combine motions and is easier to drive straight.
+    double drive = -gamepad1.left_stick_y;
+    double turn  =  gamepad1.right_stick_x;
+    leftFrontPower = Range.clip(drive + turn, -1.0, 1.0) ;
+    rightFrontPower = Range.clip(drive - turn, -1.0, 1.0) ;
+    rightRearPower = Range.clip(drive - turn, -1.0, 1.0) ;
+    leftRearPower = Range.clip(drive + turn, -1.0, 1.0) ;
+
+    // Send calculated power to wheels
+    SetPower(leftRearPower,rightFrontPower,leftFrontPower,rightRearPower);
+
+    // Show the elapsed game time and wheel power.
+    telemetry.addData("Status", "Run Time: " + runtime.toString());
+    telemetry.addData("Motors", "leftFront (%.2f), rightFront (%.2f), leftRear (%.2f), rightRear (%.2f)", leftFrontPower, rightFrontPower,leftRearPower,rightRearPower);
+}
+
+private void SetPower(double leftRearPower,double rightFrontPower, double leftFrontPower, double rightRearPower){
         leftRearMotor.setPower(leftRearPower);
         rightFrontMotor.setPower(rightFrontPower);
         leftFrontMotor.setPower(leftFrontPower);
         rightRearMotor.setPower(rightRearPower);
-        // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Motors", "leftFront (%.2f), rightFront (%.2f), leftRear (%.2f), rightRear (%.2f)", leftFrontPower, rightFrontPower,leftRearPower,rightRearPower);
-
     }
+
     /*
      * Code to run ONCE after the driver hits STOP
      */
