@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -31,6 +32,14 @@ public class Nav extends OpMode
     private DcMotor leftFrontMotor = null;
     private DcMotor rightRearMotor = null;
 
+    public Servo duckSpinner = null;
+    final double duckSpinnerSpeed = 0.1;
+    public final static double duckSpinnerHome = 0.0;
+    public final static double duckSpinnerMinRange= 0.0;
+    public final static double duckSpinnerMaxRange = 1.0;
+    double duckSpinnerPosition=0.0;
+
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -46,13 +55,14 @@ public class Nav extends OpMode
         leftFrontMotor = hardwareMap.get(DcMotor.class, "LeftFrontMotor");
         rightRearMotor = hardwareMap.get(DcMotor.class, "RightRearMotor");
 
+        duckSpinner = hardwareMap.servo.get("DuckSpinner");
+        duckSpinner.setPosition(duckSpinnerHome);
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         leftRearMotor.setDirection(DcMotor.Direction.FORWARD);
         rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
         leftFrontMotor.setDirection(DcMotor.Direction.FORWARD);
         rightRearMotor.setDirection(DcMotor.Direction.REVERSE);
-
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -82,12 +92,18 @@ public class Nav extends OpMode
 
         boolean rightBumperPressed = gamepad1.right_bumper;
         boolean leftBumperPressed = gamepad1.left_bumper;
+        boolean xButtonPressed = gamepad1.x;
+        duckSpinnerPosition = duckSpinnerHome;
 
         if (rightBumperPressed) {
             SetPower (-1,1,-1,1);
         }
         else if (leftBumperPressed) {
             SetPower (1,-1,1,-1);
+        }
+        else if(xButtonPressed){
+            duckSpinnerPosition += duckSpinnerSpeed;
+
         }
         else {
             PovDrive();
