@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -32,6 +33,11 @@ public class Nav extends OpMode
     private DcMotor leftFrontMotor = null;
     private DcMotor rightRearMotor = null;
 
+    private DcMotor leftArm = null;
+    private DcMotor rightArm = null;
+
+
+
     public Servo duckSpinner = null;
     final double duckSpinnerSpeed = 0.1;
     public final static double duckSpinnerHome = 0.0;
@@ -55,14 +61,19 @@ public class Nav extends OpMode
         leftFrontMotor = hardwareMap.get(DcMotor.class, "LeftFrontMotor");
         rightRearMotor = hardwareMap.get(DcMotor.class, "RightRearMotor");
 
+        leftArm = hardwareMap.get(DcMotor.class, "LeftArm");
+        rightArm = hardwareMap.get(DcMotor.class, "RightArm");
+
+
+
         duckSpinner = hardwareMap.servo.get("DuckSpinner");
         duckSpinner.setPosition(duckSpinnerHome);
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        leftRearMotor.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
-        leftFrontMotor.setDirection(DcMotor.Direction.FORWARD);
-        rightRearMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftRearMotor.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
+        leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
+        rightRearMotor.setDirection(DcMotor.Direction.FORWARD);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -96,14 +107,17 @@ public class Nav extends OpMode
         duckSpinnerPosition = duckSpinnerHome;
 
         if (rightBumperPressed) {
-            SetPower (-1,1,-1,1);
+            SetPower (-1,-1,1,1);
         }
         else if (leftBumperPressed) {
-            SetPower (1,-1,1,-1);
+            SetPower (1,1,-1,-1);
         }
         else if(xButtonPressed){
             duckSpinnerPosition += duckSpinnerSpeed;
 
+        }
+        else if(gamepad1.y){
+            SetArmPower(0.2);
         }
         else {
             PovDrive();
@@ -143,6 +157,11 @@ private void SetPower(double leftRearPower,double rightFrontPower, double leftFr
         rightFrontMotor.setPower(rightFrontPower);
         leftFrontMotor.setPower(leftFrontPower);
         rightRearMotor.setPower(rightRearPower);
+    }
+    private void SetArmPower(double power){
+        leftArm.setPower(power);
+        rightArm.setPower(power);
+
     }
 
     /*
