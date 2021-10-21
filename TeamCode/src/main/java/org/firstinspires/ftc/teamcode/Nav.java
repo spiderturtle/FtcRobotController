@@ -36,14 +36,10 @@ public class Nav extends OpMode
     private DcMotor leftArm = null;
     private DcMotor rightArm = null;
 
-
-
     public Servo duckSpinner = null;
-    final double duckSpinnerSpeed = 0.1;
-    public final static double duckSpinnerHome = 0.0;
-    public final static double duckSpinnerMinRange= 0.0;
-    public final static double duckSpinnerMaxRange = 1.0;
-    double duckSpinnerPosition=0.0;
+
+    private int armStartPosition = 0;
+    static final double MOTOR_TICK_COUNT = 2786;
 
 
     /*
@@ -64,10 +60,13 @@ public class Nav extends OpMode
         leftArm = hardwareMap.get(DcMotor.class, "LeftArm");
         rightArm = hardwareMap.get(DcMotor.class, "RightArm");
 
+        leftArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        leftArm.setTargetPosition(armStartPosition);
+        rightArm.setTargetPosition(armStartPosition);
 
         duckSpinner = hardwareMap.servo.get("DuckSpinner");
-        duckSpinner.setPosition(duckSpinnerHome);
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         leftRearMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -103,8 +102,10 @@ public class Nav extends OpMode
 
         boolean rightBumperPressed = gamepad1.right_bumper;
         boolean leftBumperPressed = gamepad1.left_bumper;
+        boolean rightTriggerPressed = gamepad1.right_trigger > 0;
+        boolean leftTriggerPressed = gamepad1.left_trigger > 0;
         boolean xButtonPressed = gamepad1.x;
-        duckSpinnerPosition = duckSpinnerHome;
+
 
         if (rightBumperPressed) {
             SetPower (-1,-1,1,1);
@@ -112,22 +113,43 @@ public class Nav extends OpMode
         else if (leftBumperPressed) {
             SetPower (1,1,-1,-1);
         }
-        else if(xButtonPressed){
-            duckSpinnerPosition += duckSpinnerSpeed;
+        else if (rightTriggerPressed) {
+            SetPower (-.5,-.5,.5,.5);
+        }
+        else if (leftTriggerPressed) {
+            SetPower (.5,.5,-.5,-.5);
+        }
+        else if(gamepad2.y){
+            MoveArm(leftArm);
+            MoveArm(rightArm);
+        }
+        else if(gamepad2.x){
+            //.50=stopped
+            if(gamepad2.x)
+                duckSpinner.setPosition(1);
+            else
+                duckSpinner.setPosition(.5);
+        }
 
-        }
-        else if(gamepad1.y){
-            SetArmPower(0.2);
-        }
         else {
             PovDrive();
         }
 
+    }
 
+    private void MoveArm(DcMotor motor){
+        double quarterTurn = MOTOR_TICK_COUNT/4;
+        int newTarget = motor.getTargetPosition() + (int)quarterTurn;
+        motor.setTargetPosition(newTarget);
+        motor.setPower(1);
+        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-
-
-
+        while(motor.isBusy()){
+            telemetry.addData("Status", "Running the motor to a quarter turn.");
+            telemetry.update();
+        }
+        motor.setPower(0);
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 private void PovDrive(){
 
@@ -169,6 +191,8 @@ private void SetPower(double leftRearPower,double rightFrontPower, double leftFr
      */
     @Override
     public void stop() {
+        leftArm.setPower(0);
+        rightArm.setPower(0);
     }
 
 }
