@@ -1,6 +1,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.Telemetry.Log.*;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import org.firstinspires.ftc.robotcore.external.Telemetry.Log;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -37,9 +40,10 @@ public class Nav extends OpMode
     private DcMotor rightArm = null;
 
     public Servo duckSpinner = null;
+    boolean duckSpinnerSpinning = false;
 
-    private int armStartPosition = 0;
-    static final double MOTOR_TICK_COUNT = 2786;
+    //private int armStartPosition = 0;
+    static final double MOTOR_TICK_COUNT =1120; //2786;
 
 
     /*
@@ -47,7 +51,7 @@ public class Nav extends OpMode
      */
     @Override
     public void init() {
-        telemetry.addData("Status", "Initialized");
+        //telemetry.setAutoClear(false);
 
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
@@ -60,11 +64,14 @@ public class Nav extends OpMode
         leftArm = hardwareMap.get(DcMotor.class, "LeftArm");
         rightArm = hardwareMap.get(DcMotor.class, "RightArm");
 
+        leftArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         leftArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        leftArm.setTargetPosition(armStartPosition);
-        rightArm.setTargetPosition(armStartPosition);
+        //leftArm.setTargetPosition(armStartPosition);
+        //rightArm.setTargetPosition(armStartPosition);
 
         duckSpinner = hardwareMap.servo.get("DuckSpinner");
         // Most robots need the motor on one side to be reversed to drive forward
@@ -73,9 +80,12 @@ public class Nav extends OpMode
         rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
         leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
         rightRearMotor.setDirection(DcMotor.Direction.FORWARD);
+        leftArm.setDirection(DcMotor.Direction.FORWARD);
+        rightArm.setDirection(DcMotor.Direction.REVERSE);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
+        telemetry.update();
     }
 
     /*
@@ -104,7 +114,6 @@ public class Nav extends OpMode
         boolean leftBumperPressed = gamepad1.left_bumper;
         boolean rightTriggerPressed = gamepad1.right_trigger > 0;
         boolean leftTriggerPressed = gamepad1.left_trigger > 0;
-        boolean xButtonPressed = gamepad1.x;
 
 
         if (rightBumperPressed) {
@@ -120,36 +129,54 @@ public class Nav extends OpMode
             SetPower (.5,.5,-.5,-.5);
         }
         else if(gamepad2.y){
-            MoveArm(leftArm);
+            //MoveArm(leftArm);
             MoveArm(rightArm);
         }
-        else if(gamepad2.x){
-            //.50=stopped
-            if(gamepad2.x)
-                duckSpinner.setPosition(1);
-            else
-                duckSpinner.setPosition(.5);
+        else if(gamepad2.x)
+        {
+            ToggleDuckSpinner();
         }
-
         else {
+            ArmDrive();
             PovDrive();
         }
 
     }
 
+    private void ToggleDuckSpinner(){
+        if(gamepad2.x)
+        {
+            if(duckSpinnerSpinning)
+            {
+                //stop
+                duckSpinnerSpinning = false;
+                duckSpinner.setPosition(.5);
+            }
+            else
+            {
+                //spin
+                duckSpinnerSpinning = true;
+                duckSpinner.setPosition(1);
+            }
+        }
+    }
+
     private void MoveArm(DcMotor motor){
-        double quarterTurn = MOTOR_TICK_COUNT/4;
-        int newTarget = motor.getTargetPosition() + (int)quarterTurn;
+        double quarterTurn = 50;
+        int currentPosition = motor.getTargetPosition();
+        int newTarget = currentPosition + (int)quarterTurn;
+        telemetry.log().add("Current position, Target Position", "currentPosition %.1f, newTarget %.1f",currentPosition ,newTarget);
+        telemetry.update();
         motor.setTargetPosition(newTarget);
         motor.setPower(1);
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        while(motor.isBusy()){
-            telemetry.addData("Status", "Running the motor to a quarter turn.");
-            telemetry.update();
-        }
+        //while(motor.isBusy()){
+            //telemetry.addData("Status", "Running the motor to a quarter turn.");
+            //telemetry.update();
+        //}
         motor.setPower(0);
-        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 private void PovDrive(){
 
@@ -170,20 +197,40 @@ private void PovDrive(){
     SetPower(leftRearPower,rightFrontPower,leftFrontPower,rightRearPower);
 
     // Show the elapsed game time and wheel power.
-    telemetry.addData("Status", "Run Time: " + runtime.toString());
-    telemetry.addData("Motors", "leftFront (%.2f), rightFront (%.2f), leftRear (%.2f), rightRear (%.2f)", leftFrontPower, rightFrontPower,leftRearPower,rightRearPower);
+    //telemetry.addData("Status", "Run Time: " + runtime.toString());
+    //telemetry.addData("Motors", "leftFront (%.2f), rightFront (%.2f), leftRear (%.2f), rightRear (%.2f)", leftFrontPower, rightFrontPower,leftRearPower,rightRearPower);
 }
 
-private void SetPower(double leftRearPower,double rightFrontPower, double leftFrontPower, double rightRearPower){
+    private void ArmDrive(){
+
+        double rightArmPower;
+        double leftArmPower;
+
+        double drive = -gamepad2.left_stick_y;
+        double power = Range.clip(drive, -1.0, 1.0);
+
+
+        // Send calculated power to wheels
+        SetArmPower(power);
+
+        // Show the elapsed game time and wheel power.
+        //telemetry.addData("Status", "Run Time: " + runtime.toString());
+        //telemetry.addData("Motors", "leftFront (%.2f), rightFront (%.2f), leftRear (%.2f), rightRear (%.2f)", leftFrontPower, rightFrontPower,leftRearPower,rightRearPower);
+    }
+
+    private void SetPower(double leftRearPower,double rightFrontPower, double leftFrontPower, double rightRearPower){
         leftRearMotor.setPower(leftRearPower);
         rightFrontMotor.setPower(rightFrontPower);
         leftFrontMotor.setPower(leftFrontPower);
         rightRearMotor.setPower(rightRearPower);
     }
-    private void SetArmPower(double power){
-        leftArm.setPower(power);
-        rightArm.setPower(power);
 
+
+    private void SetArmPower(double power){
+        leftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftArm.setPower(power);
+        rightArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightArm.setPower(power);
     }
 
     /*
