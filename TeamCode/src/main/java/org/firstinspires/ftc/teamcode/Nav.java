@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
+import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.robotcore.external.Telemetry.Log;
 
 /**
@@ -35,13 +37,21 @@ public class Nav extends OpMode
     private DcMotor rightFrontMotor = null;
     private DcMotor leftFrontMotor = null;
     private DcMotor rightRearMotor = null;
-
+    private Servo   clawServo  = null ;
+    
     private DcMotor leftArm = null;
     private DcMotor rightArm = null;
 
     public Servo duckSpinner = null;
     boolean duckSpinnerSpinning = false;
 
+    public final static double CLAW_SERVO_MIN_RANGE = 0.0;
+    public final static double CLAW_SERVO_MAX_RANGE = 0.3;
+
+    public final static double CLAW_SERVO_HOME = 0.0;
+    private double clawPosition = CLAW_SERVO_HOME;
+
+    final double clawServoSpeed = 0.1;
     //private int armStartPosition = 0;
     static final double MOTOR_TICK_COUNT =1120; //2786;
 
@@ -74,6 +84,8 @@ public class Nav extends OpMode
         //rightArm.setTargetPosition(armStartPosition);
 
         duckSpinner = hardwareMap.servo.get("DuckSpinner");
+        clawServo = hardwareMap.servo.get("ClawServo");
+        clawServo.setPosition(CLAW_SERVO_HOME);
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         leftRearMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -114,6 +126,8 @@ public class Nav extends OpMode
         boolean leftBumperPressed = gamepad1.left_bumper;
         boolean rightTriggerPressed = gamepad1.right_trigger > 0;
         boolean leftTriggerPressed = gamepad1.left_trigger > 0;
+        boolean g2rightTriggerPressed = gamepad2.right_trigger > 0;
+        boolean g2leftTriggerPressed  = gamepad2.left_trigger > 0;
 
 
         if (rightBumperPressed) {
@@ -136,11 +150,23 @@ public class Nav extends OpMode
         {
             ToggleDuckSpinner();
         }
-        else {
-            ArmDrive();
-            PovDrive();
+         else if(g2rightTriggerPressed){
+             clawPosition += clawServoSpeed;
+             MoveClaw();
+         }
+         else if(g2leftTriggerPressed){
+             clawPosition -= clawServoSpeed;
+             MoveClaw();
         }
+         else {
+             ArmDrive();
+             PovDrive();
+         }
+    }
 
+    private void MoveClaw(){
+        clawPosition = Range.clip(clawPosition, CLAW_SERVO_MIN_RANGE, CLAW_SERVO_MAX_RANGE);
+        clawServo.setPosition(clawPosition);
     }
 
     private void ToggleDuckSpinner(){
