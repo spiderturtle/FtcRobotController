@@ -45,10 +45,10 @@ public class Nav extends OpMode
     public Servo duckSpinner = null;
     boolean duckSpinnerSpinning = false;
 
-    public final static double CLAW_SERVO_MIN_RANGE = 0.0;
-    public final static double CLAW_SERVO_MAX_RANGE = 0.3;
+    public final static double CLAW_SERVO_MIN_RANGE = 0.1;
+    public final static double CLAW_SERVO_MAX_RANGE = 0.4;
 
-    public final static double CLAW_SERVO_HOME = 0.0;
+    public final static double CLAW_SERVO_HOME = 0.4;
     private double clawPosition = CLAW_SERVO_HOME;
 
     final double clawServoSpeed = 0.1;
@@ -151,11 +151,11 @@ public class Nav extends OpMode
             ToggleDuckSpinner();
         }
          else if(g2rightTriggerPressed){
-             clawPosition += clawServoSpeed;
+             clawPosition -= clawServoSpeed;
              MoveClaw();
          }
          else if(g2leftTriggerPressed){
-             clawPosition -= clawServoSpeed;
+             clawPosition += clawServoSpeed;
              MoveClaw();
         }
          else {
@@ -233,7 +233,7 @@ private void PovDrive(){
         double leftArmPower;
 
         double drive = -gamepad2.left_stick_y;
-        double power = Range.clip(drive, -1.0, 1.0);
+        double power = Range.clip(drive, -.5, .5);
 
 
         // Send calculated power to wheels
