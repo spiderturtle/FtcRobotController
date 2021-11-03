@@ -1,18 +1,12 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.Telemetry.Log.*;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-
-import org.checkerframework.checker.units.qual.C;
-import org.firstinspires.ftc.robotcore.external.Telemetry.Log;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -28,8 +22,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry.Log;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Nav", group="Iterative Opmode")
-public class Nav extends OpMode
+@TeleOp(name="Impulse Nav", group="Iterative Opmode")
+public class ImpulsePowerForTraining extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -45,10 +39,10 @@ public class Nav extends OpMode
     public Servo duckSpinner = null;
     boolean duckSpinnerSpinning = false;
 
-    public final static double CLAW_SERVO_MIN_RANGE = 0.1;
-    public final static double CLAW_SERVO_MAX_RANGE = 0.4;
+    public final static double CLAW_SERVO_MIN_RANGE = -0.5;
+    public final static double CLAW_SERVO_MAX_RANGE = 0.2;
 
-    public final static double CLAW_SERVO_HOME = 0.4;
+    public final static double CLAW_SERVO_HOME = 0.2;
     private double clawPosition = CLAW_SERVO_HOME;
 
     final double clawServoSpeed = 0.1;
@@ -160,6 +154,8 @@ public class Nav extends OpMode
         }
          else {
              ArmDrive();
+             if (gamepad2.left_stick_y==0)
+                 SetArmPower(0.19);
              PovDrive();
          }
     }
@@ -194,7 +190,7 @@ public class Nav extends OpMode
         telemetry.log().add("Current position, Target Position", "currentPosition %.1f, newTarget %.1f",currentPosition ,newTarget);
         telemetry.update();
         motor.setTargetPosition(newTarget);
-        motor.setPower(1);
+        motor.setPower(.75);
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         //while(motor.isBusy()){
@@ -210,6 +206,10 @@ private void PovDrive(){
     double rightFrontPower;
     double leftRearPower;
     double rightRearPower;
+    double leftFrontHalfPower=0.0;
+    double rightFrontHalfPower=0.0;
+    double leftRearHalfPower=0.0;
+    double rightRearHalfPower=0.0;
     // POV Mode uses left stick to go forward, and right stick to turn.
     // - This uses basic math to combine motions and is easier to drive straight.
     double drive = -gamepad1.left_stick_y;
@@ -218,9 +218,24 @@ private void PovDrive(){
     rightFrontPower = Range.clip(drive - turn, -1.0, 1.0) ;
     rightRearPower = Range.clip(drive - turn, -1.0, 1.0) ;
     leftRearPower = Range.clip(drive + turn, -1.0, 1.0) ;
+    if (leftFrontPower!=0)
+        leftFrontHalfPower= leftFrontPower /2;
+    if (rightFrontPower!=0)
+        rightFrontHalfPower= rightFrontPower /2;
+    if (rightRearPower!=0)
+        rightRearHalfPower= rightRearPower /2;
+    if (leftRearPower!=0)
+        leftRearHalfPower= leftRearPower /2;
 
+
+    //if(gamepad1.a){
+        SetPower(leftRearHalfPower,rightFrontHalfPower,leftFrontHalfPower,rightRearHalfPower);
+    //}
+    //else {
+        //SetPower(leftRearPower,rightFrontPower,leftFrontPower,rightRearPower);
+
+    //}
     // Send calculated power to wheels
-    SetPower(leftRearPower,rightFrontPower,leftFrontPower,rightRearPower);
 
     // Show the elapsed game time and wheel power.
     //telemetry.addData("Status", "Run Time: " + runtime.toString());
