@@ -9,6 +9,7 @@ public class DriveFunctions
     private DcMotor rightFrontMotor = null;
     private DcMotor leftFrontMotor = null;
     private DcMotor rightRearMotor = null;
+    private double driveSpeed;
 
     public DriveFunctions(HardwareMap hwMap){
         leftRearMotor = hwMap.get(DcMotor.class, "LeftRearMotor");
@@ -30,42 +31,34 @@ public class DriveFunctions
         SetPower (-(speed),-(speed),speed,speed);
     }
 
+    public void SetDriveSpeed(double power){
+        driveSpeed = power;
+    }
 
-
-    public void Drive(double drivePower, double turn, boolean halfPower){
+    public void Drive(double drivePower, double turn){
 
     double leftFrontPower;
     double rightFrontPower;
     double leftRearPower;
     double rightRearPower;
-    double leftFrontHalfPower=0.0;
-    double rightFrontHalfPower=0.0;
-    double leftRearHalfPower=0.0;
-    double rightRearHalfPower=0.0;
+
     // POV Mode uses left stick to go forward, and right stick to turn.
     // - This uses basic math to combine motions and is easier to drive straight.
-    leftFrontPower = Range.clip(drivePower + turn, -.5, .5) ;
-    rightFrontPower = Range.clip(drivePower - turn, -.5, .5) ;
-    rightRearPower = Range.clip(drivePower - turn, -.5, .5) ;
-    leftRearPower = Range.clip(drivePower + turn, -.5, .5) ;
-    if (leftFrontPower!=0)
-        leftFrontHalfPower= leftFrontPower /2;
-    if (rightFrontPower!=0)
-        rightFrontHalfPower= rightFrontPower /2;
-    if (rightRearPower!=0)
-        rightRearHalfPower= rightRearPower /2;
-    if (leftRearPower!=0)
-        leftRearHalfPower= leftRearPower /2;
+    leftFrontPower = Range.clip(drivePower + turn, -driveSpeed, driveSpeed) ;
+    rightFrontPower = Range.clip(drivePower - turn, -driveSpeed, driveSpeed) ;
+    rightRearPower = Range.clip(drivePower - turn, -driveSpeed, driveSpeed) ;
+    leftRearPower = Range.clip(drivePower + turn, -driveSpeed, driveSpeed) ;
+    SetPower(leftRearPower,rightFrontPower,leftFrontPower,rightRearPower);
 
-
-    if(halfPower){
-        SetPower(leftRearHalfPower,rightFrontHalfPower,leftFrontHalfPower,rightRearHalfPower);
-    }
-    else {
-        SetPower(leftRearPower,rightFrontPower,leftFrontPower,rightRearPower);
-
-    }
  }
+
+    public void Spin(boolean right){
+        if(right)
+            Drive(0,.5);
+        else
+            Drive(0,-.5);
+
+    }
     private void SetPower(double leftRearPower,double rightFrontPower, double leftFrontPower, double rightRearPower){
         leftRearMotor.setPower(leftRearPower);
         rightFrontMotor.setPower(rightFrontPower);

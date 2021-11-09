@@ -3,12 +3,16 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class ArmMechanics {
-    private static final double gravityAdjustment  = .19;
+    private static final double gravityAdjustment  = .15;
     private DcMotor leftArm = null;
     private DcMotor rightArm = null;
+    private Telemetry log = null;
 
-    public ArmMechanics(HardwareMap hwMap){
+    public ArmMechanics(HardwareMap hwMap, Telemetry telemetry){
+        log = telemetry;
         leftArm = hwMap.get(DcMotor.class, "LeftArm");
         rightArm = hwMap.get(DcMotor.class, "RightArm");
 
@@ -23,10 +27,10 @@ public class ArmMechanics {
         SetArmPower(gravityAdjustment);
     }
 
-    public void ArmDrive(double drivePower){
-        double power = Range.clip(drivePower, -.5, .5);
+    public void ArmDrive(double drivePower, boolean useGravityAdjustment){
+        double power = Range.clip(drivePower, -.1, .4);
         // Send calculated power to both arm motors
-        SetArmPower(power == 0 ? gravityAdjustment : power); //keep the arm from falling if set to 0
+        SetArmPower(power == 0 && useGravityAdjustment ? gravityAdjustment : power); //keep the arm from falling if set to 0
     }
     private void SetArmPower(double power){
         leftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -35,23 +39,27 @@ public class ArmMechanics {
         rightArm.setPower(power);
     }
 
-
-//TODO: set arm to positions
-    //private void MoveArm(DcMotor motor){
-        //double quarterTurn = 50;
-        //int currentPosition = motor.getTargetPosition();
+    //public void MoveArmMotors(){
+        //leftArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //rightArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //double quarterTurn = 1;
+        //int currentPosition = 0;
         //int newTarget = currentPosition + (int)quarterTurn;
-        //telemetry.log().add("Current position, Target Position", "currentPosition %.1f, newTarget %.1f",currentPosition ,newTarget);
-        //telemetry.update();
-        //motor.setTargetPosition(newTarget);
-        //motor.setPower(.75);
-        //motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //log.addData("Current position", currentPosition);
+        //log.update();
+        //leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //rightArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //leftArm.setTargetPosition(newTarget);
+        //rightArm.setTargetPosition(newTarget);
+        //leftArm.setPower(.25);
+        //rightArm.setPower(.25);
+        //while(leftArm.isBusy()){
 
-        //while(motor.isBusy()){
-        //telemetry.addData("Status", "Running the motor to a quarter turn.");
-        //telemetry.update();
         //}
-        //motor.setPower(0);
-        //motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //
+        //leftArm.setPower(0);
+        //leftArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     //}
+
+
 }

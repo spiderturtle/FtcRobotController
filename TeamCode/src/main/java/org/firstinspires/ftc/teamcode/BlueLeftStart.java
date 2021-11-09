@@ -30,19 +30,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 
-@Autonomous(name="RedRightStartAuto", group="Linear Opmode")
-public class RedRightStart extends LinearOpMode {
+@Autonomous(name="BlueLeftStartAuto", group="Linear Opmode")
+public class BlueLeftStart extends LinearOpMode {
     ArmMechanics armMechanics;
     Claw clawMechanics;
     DuckSpinner duckSpinner;
@@ -57,44 +49,45 @@ public class RedRightStart extends LinearOpMode {
         duckSpinner = new DuckSpinner(hardwareMap);
         driveFunctions = new DriveFunctions(hardwareMap);
         driveFunctions.SetDriveSpeed(.5);
-        double strafePower = .25;
+        double strafePower = .5;
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         if (opModeIsActive()) {
-            //strafe left
-            driveFunctions.StrafeLeft(strafePower);
-            sleep(500);
+            //strafe Right
+            driveFunctions.StrafeRight(strafePower);
+            sleep(1000);
             driveFunctions.StopWheels();
             // raise arm
-            //move forward
+            clawMechanics.MoveClaw(false);
+            armMechanics.ArmDrive(.21,true);
+            sleep(4000);
             driveFunctions.MoveForward();
             sleep(500);
             driveFunctions.StopWheels();
-            // open claw
+            sleep(500);
             clawMechanics.MoveClaw(true);
-            //reverse
+            armMechanics.ArmDrive(0,true);
+            sleep(2000);
+            //move backwards
             driveFunctions.MoveBackward();
-            sleep(500);
+            sleep(650);
             driveFunctions.StopWheels();
-            //lower arm
-            // armMechanics.ArmDrive(0.1)
-            // spin 90 right
-            driveFunctions.Spin(true);
-            sleep(500);
-            // reverse to carousel
-            driveFunctions.MoveBackward();
-            sleep(500);
-            driveFunctions.StopWheels();
-            //strafe right to engage carousel
+            armMechanics.ArmDrive(0,false);
+            sleep(1000);
+           //strafe right to carousel
             driveFunctions.StrafeRight(strafePower);
-            sleep(500);
+            sleep(1850);
             driveFunctions.StopWheels();
-            //spin carousel
-            duckSpinner.SpinCounterClockwise();
-            //strafe left to park
-            driveFunctions.StrafeLeft(strafePower);
-            sleep(500);
+            //spin duckspinner
+            duckSpinner.SpinClockwise();
+            sleep(6490);
+            //move forward
+            driveFunctions.MoveForward();
+            sleep(925);
             driveFunctions.StopWheels();
+            driveFunctions.StrafeRight(strafePower);
+            sleep(750);
+
 
             //all stop
 

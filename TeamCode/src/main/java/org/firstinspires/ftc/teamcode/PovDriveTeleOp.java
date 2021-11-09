@@ -11,10 +11,11 @@ public class PovDriveTeleOp extends OpMode {
 
     @Override
     public void init() {
-        armMechanics = new ArmMechanics(hardwareMap);
-        clawMechanics = new Claw(hardwareMap);
+        armMechanics = new ArmMechanics(hardwareMap, telemetry);
+        clawMechanics = new Claw(hardwareMap, telemetry, true);
         duckSpinner = new DuckSpinner(hardwareMap);
         driveFunctions = new DriveFunctions(hardwareMap);
+        driveFunctions.SetDriveSpeed(.5);
     }
 
     @Override
@@ -33,10 +34,22 @@ public class PovDriveTeleOp extends OpMode {
             driveFunctions.StrafeLeft (1);
         }
         else if (rightTriggerPressed) {
-            driveFunctions.StrafeRight (.5);
+            driveFunctions.StrafeRight (.25);
         }
         else if (leftTriggerPressed) {
-            driveFunctions.StrafeLeft (.5);
+            driveFunctions.StrafeLeft (.25);
+        }
+        else if(gamepad1.a){
+            driveFunctions.SetDriveSpeed(.25);
+        }
+        else if(gamepad1.x){
+            driveFunctions.SetDriveSpeed(.5);
+        }
+        else if(gamepad1.y){
+            driveFunctions.SetDriveSpeed(1);
+        }
+        else if(gamepad1.b){
+            driveFunctions.Spin(true);
         }
         else if(gamepad2.y){
             duckSpinner.SpinCounterClockwise();
@@ -57,8 +70,8 @@ public class PovDriveTeleOp extends OpMode {
             clawMechanics.MoveClaw(true);
         }
         else {
-            armMechanics.ArmDrive(-gamepad2.left_stick_y);
-            driveFunctions.Drive(-gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.a);
+            armMechanics.ArmDrive(-gamepad2.left_stick_y, clawMechanics.isClawClosed);
+            driveFunctions.Drive(-gamepad1.left_stick_y, gamepad1.right_stick_x);
         }
     }
 }

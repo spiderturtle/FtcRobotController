@@ -1,30 +1,39 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class Claw {
     private Servo clawServo  = null ;
-    public final static double CLAW_SERVO_MIN_RANGE = -1;
-    public final static double CLAW_SERVO_MAX_RANGE = 1;
-
-    public final static double CLAW_SERVO_HOME = .4;
-    private double clawPosition = CLAW_SERVO_HOME;
-
-    final double clawServoSpeed = 0.1;
-    public Claw(HardwareMap hwMap){
+    public boolean isClawClosed = false;
+    public final static double CLAW_SERVO_OPEN = .2;
+    public final static double CLAW_SERVO_CLOSED = 0.001;
+    private Telemetry log = null;
+    public Claw(HardwareMap hwMap, Telemetry telemetry, boolean open){
+        log = telemetry;
         clawServo = hwMap.servo.get("ClawServo");
-        clawServo.setPosition(CLAW_SERVO_HOME);
+        if(open)
+            clawServo.setPosition(CLAW_SERVO_OPEN);
+        else
+            clawServo.setPosition(CLAW_SERVO_CLOSED);
     }
 
-    public void MoveClaw(boolean increment){
-        if(increment){
-            clawPosition += clawServoSpeed;
+    public void MoveClaw(boolean open){
+        if(open){
+            clawServo.setPosition(CLAW_SERVO_OPEN);
+            log.addData("CLAW", "Setting Claw Open");
+            isClawClosed = false;
         }else {
-            clawPosition -= clawServoSpeed;
+            clawServo.setPosition(CLAW_SERVO_CLOSED);
+            log.addData("CLAW", "Setting Claw Closed");
+            isClawClosed = true;
         }
-        clawPosition = Range.clip(clawPosition, CLAW_SERVO_MIN_RANGE, CLAW_SERVO_MAX_RANGE);
-        clawServo.setPosition(clawPosition);
+        log.update();
+
     }
 }
