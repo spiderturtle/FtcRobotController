@@ -83,7 +83,7 @@ public class BlueLeftStart extends LinearOpMode {
             sleep(6490);
             //move forward
             driveFunctions.MoveForward();
-            sleep(925);
+            sleep(1025);
             driveFunctions.StopWheels();
             driveFunctions.StrafeRight(strafePower);
             sleep(750);

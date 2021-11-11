@@ -30,19 +30,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 
-@Autonomous(name="RedRightStartAuto", group="Linear Opmode")
-public class RedRightStart extends LinearOpMode {
+@Autonomous(name="RedLeftStartAuto", group="Linear Opmode")
+public class RedLeftStart extends LinearOpMode {
     ArmMechanics armMechanics;
     Claw clawMechanics;
     DuckSpinner duckSpinner;
@@ -62,8 +54,8 @@ public class RedRightStart extends LinearOpMode {
         waitForStart();
         if (opModeIsActive()) {
             //strafe Right
-            driveFunctions.StrafeLeft(strafePower);
-            sleep(1000);
+            driveFunctions.StrafeRight(strafePower);
+            sleep(700);
             driveFunctions.StopWheels();
             // raise arm
             clawMechanics.MoveClaw(false);
@@ -85,9 +77,9 @@ public class RedRightStart extends LinearOpMode {
             sleep(1000);
             //strafe right to carousel
             driveFunctions.Spin(true);
-            sleep(600);
+            sleep(625);
             driveFunctions.MoveBackward();
-            sleep(1700);
+            sleep(1780);
             driveFunctions.StopWheels();
             driveFunctions.StrafeRight(strafePower);
             sleep(400);
@@ -102,9 +94,6 @@ public class RedRightStart extends LinearOpMode {
             driveFunctions.MoveBackward();
             sleep(275);
             driveFunctions.StopWheels();
-
-
-            //all stop
 
         }
     }
