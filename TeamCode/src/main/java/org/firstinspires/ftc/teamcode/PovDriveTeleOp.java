@@ -34,10 +34,10 @@ public class PovDriveTeleOp extends OpMode {
             driveFunctions.StrafeLeft (1);
         }
         else if (rightTriggerPressed) {
-            driveFunctions.StrafeRight (.25);
+            driveFunctions.StrafeRight (.5);
         }
         else if (leftTriggerPressed) {
-            driveFunctions.StrafeLeft (.25);
+            driveFunctions.StrafeLeft (.5);
         }
         else if(gamepad1.a){
             driveFunctions.SetDriveSpeed(.25);
@@ -51,10 +51,10 @@ public class PovDriveTeleOp extends OpMode {
         else if(gamepad1.b){
             driveFunctions.Spin(true);
         }
-        else if(gamepad2.y){
+        else if(gamepad2.x){
             duckSpinner.SpinCounterClockwise();
         }
-        else if(gamepad2.x)
+        else if(gamepad2.b)
         {
             duckSpinner.SpinClockwise();
         }

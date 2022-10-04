@@ -33,8 +33,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 
-@Autonomous(name="BlueLeftAuto", group="Linear Opmode")
-public class BlueLeftStart extends LinearOpMode {
+@Autonomous(name="RedRightPark", group="Linear Opmode")
+public class RedRightJustPark extends LinearOpMode {
     ArmMechanics armMechanics;
     Claw clawMechanics;
     DuckSpinner duckSpinner;
@@ -48,37 +48,20 @@ public class BlueLeftStart extends LinearOpMode {
         clawMechanics = new Claw(hardwareMap, telemetry, false);
         duckSpinner = new DuckSpinner(hardwareMap);
         driveFunctions = new DriveFunctions(hardwareMap);
-        driveFunctions.SetDriveSpeed(.5);
+        driveFunctions.SetDriveSpeed(.208);
         double strafePower = .5;
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         if (opModeIsActive()) {
-            //strafe Right
-            driveFunctions.StrafeRight(strafePower);
-            sleep(1000);
-            driveFunctions.StopWheels();
-            // raise arm
             clawMechanics.MoveClaw(false);
             armMechanics.ArmDrive(.207,true);
-            sleep(4000);
-            driveFunctions.MoveForward();
-            sleep(500);
-            driveFunctions.StopWheels();
-            sleep(500);
-            clawMechanics.MoveClaw(true);
-            sleep(1000);
-            armMechanics.ArmDrive(0,false);
-            driveFunctions.MoveBackward();
-            sleep(200);
-            driveFunctions.StopWheels();
-            sleep(1000);
-            clawMechanics.MoveClaw(false);
-            driveFunctions.Spin(true);
-            sleep(750);
-            driveFunctions.StopWheels();
-            driveFunctions.MoveBackward();
+            sleep(2000);
+            driveFunctions.StrafeRight(strafePower);
             sleep(3000);
             driveFunctions.StopWheels();
+
+
+
             //all stop
 
         }

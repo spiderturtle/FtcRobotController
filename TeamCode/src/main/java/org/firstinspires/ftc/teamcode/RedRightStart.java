@@ -67,7 +67,7 @@ public class RedRightStart extends LinearOpMode {
             driveFunctions.StopWheels();
             // raise arm
             clawMechanics.MoveClaw(false);
-            armMechanics.ArmDrive(.205,true);
+            armMechanics.ArmDrive(.208,true);
             sleep(4000);
             driveFunctions.MoveForward();
             sleep(500);
@@ -79,28 +79,14 @@ public class RedRightStart extends LinearOpMode {
             sleep(2000);
             //move backwards
             driveFunctions.MoveBackward();
-            sleep(200);
+            sleep(500);
             driveFunctions.StopWheels();
             armMechanics.ArmDrive(0,false);
             sleep(1000);
-            //strafe right to carousel
-            driveFunctions.Spin(true);
-            sleep(600);
-            driveFunctions.MoveBackward();
-            sleep(1700);
-            driveFunctions.StopWheels();
+            //strafe to warehouse
+            clawMechanics.MoveClaw(false);
             driveFunctions.StrafeRight(strafePower);
-            sleep(400);
-            driveFunctions.StopWheels();
-            //spin duckspinner
-            duckSpinner.SpinCounterClockwise();
-            sleep(6490);
-            //move forward
-            driveFunctions.StrafeLeft(strafePower);
-            sleep(1000);
-            driveFunctions.StopWheels();
-            driveFunctions.MoveBackward();
-            sleep(275);
+            sleep(3000);
             driveFunctions.StopWheels();
 
 

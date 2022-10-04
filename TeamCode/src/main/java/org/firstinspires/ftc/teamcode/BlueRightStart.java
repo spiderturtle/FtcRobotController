@@ -33,7 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 
-@Autonomous(name="BlueLeftStartAuto", group="Linear Opmode")
+@Autonomous(name="BlueRightAuto", group="Linear Opmode")
 public class BlueRightStart extends LinearOpMode {
     ArmMechanics armMechanics;
     Claw clawMechanics;
@@ -59,7 +59,7 @@ public class BlueRightStart extends LinearOpMode {
             driveFunctions.StopWheels();
             // raise arm
             clawMechanics.MoveClaw(false);
-            armMechanics.ArmDrive(.21,true);
+            armMechanics.ArmDrive(.207,true);
             sleep(4000);
             driveFunctions.MoveForward();
             sleep(500);
@@ -74,20 +74,39 @@ public class BlueRightStart extends LinearOpMode {
             driveFunctions.StopWheels();
             armMechanics.ArmDrive(0,false);
             sleep(1000);
+            clawMechanics.MoveClaw(false);
            //strafe right to carousel
             driveFunctions.StrafeRight(strafePower);
-            sleep(1850);
+            sleep(1900);
             driveFunctions.StopWheels();
+            driveFunctions.MoveForward();
+            sleep(100);
+            driveFunctions.StopWheels();
+            driveFunctions.Spin(true);
+            sleep(150);
+            driveFunctions.StopWheels();
+            driveFunctions.StrafeRight(strafePower);
+            sleep(200);
+            driveFunctions.StopWheels();
+
             //spin duckspinner
-            duckSpinner.SpinClockwise();
+            duckSpinner.SpinCounterClockwise(.2);
             sleep(6490);
+            driveFunctions.StrafeLeft(strafePower);
+            sleep(100);
+            driveFunctions.StopWheels();
+
             //move forward
             driveFunctions.MoveForward();
-            sleep(1025);
+            sleep(1000);
             driveFunctions.StopWheels();
             driveFunctions.StrafeRight(strafePower);
             sleep(750);
-
+            clawMechanics.MoveClaw(true);
+            sleep(1000);
+            driveFunctions.MoveForward();
+            sleep(100);
+            driveFunctions.StopWheels();
 
             //all stop
 

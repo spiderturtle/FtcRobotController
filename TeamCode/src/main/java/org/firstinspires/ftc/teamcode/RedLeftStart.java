@@ -55,11 +55,11 @@ public class RedLeftStart extends LinearOpMode {
         if (opModeIsActive()) {
             //strafe Right
             driveFunctions.StrafeRight(strafePower);
-            sleep(700);
+            sleep(730);
             driveFunctions.StopWheels();
             // raise arm
             clawMechanics.MoveClaw(false);
-            armMechanics.ArmDrive(.205,true);
+            armMechanics.ArmDrive(.207,true);
             sleep(4000);
             driveFunctions.MoveForward();
             sleep(500);
@@ -67,7 +67,7 @@ public class RedLeftStart extends LinearOpMode {
             sleep(500);
             clawMechanics.MoveClaw(true);
             sleep(500);
-            armMechanics.ArmDrive(0,true);
+            armMechanics.ArmDrive(0,false);
             sleep(2000);
             //move backwards
             driveFunctions.MoveBackward();
@@ -84,12 +84,26 @@ public class RedLeftStart extends LinearOpMode {
             driveFunctions.StrafeRight(strafePower);
             sleep(400);
             driveFunctions.StopWheels();
+            driveFunctions.Spin(true);
+            sleep(150);
+            driveFunctions.StopWheels();
+            driveFunctions.StrafeRight(strafePower);
+            sleep(100);
+            driveFunctions.StopWheels();
+
+
             //spin duckspinner
-            duckSpinner.SpinCounterClockwise();
+            duckSpinner.SpinClockwise(.2);
             sleep(6490);
-            //move forward
             driveFunctions.StrafeLeft(strafePower);
-            sleep(1000);
+            sleep(100);
+            driveFunctions.StopWheels();
+            driveFunctions.Spin(false);
+            sleep(150);
+            driveFunctions.StopWheels();
+
+            driveFunctions.StrafeLeft(strafePower);
+            sleep(875);
             driveFunctions.StopWheels();
             driveFunctions.MoveBackward();
             sleep(275);
